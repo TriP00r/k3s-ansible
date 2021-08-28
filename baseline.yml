@@ -1,0 +1,7 @@
+---
+- name: Configure NTP client
+  hosts: all
+  become: yes
+  become_method: sudo
+  roles:
+    - { role: geerlingguy.ntp }

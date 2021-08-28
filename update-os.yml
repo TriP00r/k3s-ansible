@@ -1,0 +1,11 @@
+---
+- name: Update OS packages
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Clean cache and upgade OS packages
+      apt:
+        update_cache: yes
+        upgrade: yes
+

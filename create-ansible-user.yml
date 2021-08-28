@@ -1,0 +1,37 @@
+---
+- name: Create ansible user and add ssh key
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Make sure we have a 'wheel' group
+      group:
+        name: wheel
+        state: present
+
+    - name: Allow 'wheel' group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Make sure ansible user exists
+      user:
+        name: ansible
+        state: present
+        comment: provisioning user
+        group: wheel
+        shell: /bin/bash
+        expires: -1
+
+    - name: Make sure ansible key is accepted in authorized_keys
+      authorized_key:
+        user: ansible
+        state: present
+        key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDLN8Qk3g63Mqm+7gEDhwdjk3d5DQQZp8AEJUnOTk61o85E0QF5DkHKd3AasHmwh6Hg1IzK3VFxg+CWOU4T4dqnE7fAlbqIgnIAGcp8PW67afX5ABR3/bxP3Qc4sflKAwOlcyj7Fnm6zP65ufttUP9X00Z/dkALhW6KoQ5MZvxaghehZbpvfMaTCf0sdIH5+I7O3eqGImr0i2zFT6EokTuU+mAtE2RZ0fF7IK/nEw5XwP+C4TewldffBdXu7bdmiusu1rWKuJWrXPSZzkYiMA/zQW9n41iUI/v6uXjbHn4TRsH7YShazvqYyBv1Hn1DanAhXNYnKZY5lERmUH0trxAt trip00r@gmail.com"
+    - name: Make sure pi user password is changed
+      user:
+        name: pi
+        password: "N0ne0fY0urBusiness!"
